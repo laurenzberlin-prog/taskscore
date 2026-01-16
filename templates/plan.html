@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="utf-8">
-  <title>TaskScore – Fortschritt</title>
+  <title>TaskScore – Wochenplan</title>
   <style>
     body{
         font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;margin:0;padding:0;background:#f4f5f7}
@@ -18,69 +18,55 @@
         margin-right:24px;text-decoration:none;color:#2563eb;font-weight:500}
     .muted{
         color:#6b7280;font-size:.92rem}
-
-    .kpis{
-        display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:12px}
-    @media (
-        max-width:760px){.kpis{grid-template-columns:1fr}}
-    .kpi{
-        border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px}
-    .kpi .label{
-        font-size:.85rem;color:#6b7280}
-    .kpi .value{
-        font-size:1.2rem;font-weight:700;margin-top:4px}
-
-    .progress-wrap{
-        margin-top:12px}
-    .progress-bar{
-        height:14px;background:#e5e7eb;border-radius:999px;overflow:hidden}
-    .progress-bar>div{
-        height:100%;background:#22c55e}
+    table{
+        width:100%;border-collapse:collapse;margin-top:8px}
+    th,td{
+        text-align:left;padding:10px 8px;border-bottom:1px solid #e5e7eb;vertical-align:middle}
+    th{
+        font-size:.85rem;color:#374151}
+    .bar{
+        height:10px;background:#e5e7eb;border-radius:999px;overflow:hidden}
+    .bar>div{
+        height:100%;background:#2563eb}
+    .badge{
+        display:inline-block;padding:3px 10px;border-radius:999px;background:#e5edff;color:#1e3a8a;font-size:.8rem}
   </style>
 </head>
 
 <body>
   <header>
-    <h1>TaskScore – Fortschritt</h1>
+    <h1>TaskScore – Wochenplan</h1>
   </header>
 
   <main>
     <section class="card nav">
       <a href="/">Start</a>
       <a href="/tasks">Aufgaben</a>
-      <a href="/plan">Wochenplan</a>
+      <a href="/progress">Fortschritt</a>
     </section>
 
     <section class="card">
-      <h2>Fortschritt dieser Woche</h2>
-      <p class="muted">Hier siehst du deinen aktuellen Fortschritt, bezogen auf deine Aufgaben mit der jeweiligen Punkteverteilung.</p>
+      <h2>Punkte-Verteilung pro Wochentag</h2>
+      <p class="muted">Übersicht der eingeplanten Punkte pro Wochentag.</p>
 
-      {% set percent = 0 %}
-      {% if total_points and total_points > 0 %}
-        {% set percent = (done_points / total_points * 100) %}
-      {% endif %}
+      <p><span class="badge">Wochenbudget: 100 Punkte</span></p>
 
-      <div class="kpis">
-        <div class="kpi">
-          <div class="label">Wochenbudget</div>
-          <div class="value">{{ total_points }}</div>
-        </div>
-        <div class="kpi">
-          <div class="label">Erledigte Punkte</div>
-          <div class="value">{{ done_points }}</div>
-        </div>
-        <div class="kpi">
-          <div class="label">Fortschritt</div>
-          <div class="value">{{ percent|round(0) }}%</div>
-        </div>
-      </div>
-
-      <div class="progress-wrap">
-        <p class="muted">{{ done_points }} / {{ total_points }} Punkte</p>
-        <div class="progress-bar">
-          <div style="width: {{ percent }}%;"></div>
-        </div>
-      </div>
+      <table>
+        <thead>
+          <tr><th>Tag</th><th>Punkte</th><th>Visualisierung</th></tr>
+        </thead>
+        <tbody>
+          {% for day, points in weekly_points.items() %}
+          <tr>
+            <td><strong>{{ day }}</strong></td>
+            <td>{{ points }}</td>
+            <td>
+              <div class="bar"><div style="width: {{ points }}%;"></div></div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </section>
   </main>
 </body>
